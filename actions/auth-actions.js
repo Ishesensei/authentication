@@ -1,6 +1,8 @@
 'use server';
 
+import { hashUserPassword } from '@/lib/hash';
 import createUser from '@/lib/user';
+import { redirect } from 'next/navigation';
 
 export default async function signup(prevState, formData) {
   const email = formData.get('email');
@@ -22,9 +24,8 @@ export default async function signup(prevState, formData) {
   if (Object.keys(errors).length > 0) {
     return { errors };
   }
-
- const createdUser= await createUser(email, password);
-console.log('✌️createdUser --->', createdUser);
-
-  return;
+  const hashedPassword = hashUserPassword(password);
+  const createdUser = await createUser(email, hashedPassword);
+  console.log('✌️createdUser --->', createdUser);
+  redirect('/training');
 }
